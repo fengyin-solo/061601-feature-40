@@ -330,7 +330,7 @@ export const gameConfig: GameConfig = {
       title: '小雨的眼泪',
       description: '林小雨终于抬起头看着你，眼里闪着泪光。"你终于说了……"她深吸一口气，"其实我一直在等你说这句话。"',
       characterId: 'linxiaoyu',
-      triggerCondition: { requiredFlags: [], characterId: 'linxiaoyu' },
+      triggerCondition: { characterId: 'linxiaoyu' },
       choices: [
         {
           id: 'hold_hands',
@@ -345,7 +345,8 @@ export const gameConfig: GameConfig = {
         }
       ],
       once: true,
-      priority: 70
+      priority: 70,
+      nextEventOnly: true
     },
     {
       id: 'recovery_linxiaoyu_letter',
@@ -367,7 +368,8 @@ export const gameConfig: GameConfig = {
         }
       ],
       once: true,
-      priority: 70
+      priority: 70,
+      nextEventOnly: true
     },
     {
       id: 'recovery_sufei',
@@ -417,7 +419,8 @@ export const gameConfig: GameConfig = {
         }
       ],
       once: true,
-      priority: 70
+      priority: 70,
+      nextEventOnly: true
     },
     {
       id: 'recovery_sufei_sweet',
@@ -439,7 +442,8 @@ export const gameConfig: GameConfig = {
         }
       ],
       once: true,
-      priority: 70
+      priority: 70,
+      nextEventOnly: true
     },
     {
       id: 'recovery_yeqing',
@@ -489,7 +493,8 @@ export const gameConfig: GameConfig = {
         }
       ],
       once: true,
-      priority: 70
+      priority: 70,
+      nextEventOnly: true
     },
     {
       id: 'recovery_resources',
@@ -552,7 +557,8 @@ export const gameConfig: GameConfig = {
         }
       ],
       once: true,
-      priority: 70
+      priority: 70,
+      nextEventOnly: true
     },
     {
       id: 'recovery_resources_detail',
@@ -574,7 +580,8 @@ export const gameConfig: GameConfig = {
         }
       ],
       once: true,
-      priority: 70
+      priority: 70,
+      nextEventOnly: true
     },
     {
       id: 'crisis_double',
@@ -627,7 +634,8 @@ export const gameConfig: GameConfig = {
         }
       ],
       once: true,
-      priority: 90
+      priority: 90,
+      nextEventOnly: true
     }
   ],
 

@@ -74,6 +74,7 @@ export interface GameEventConfig {
   choices: EventChoice[]
   once: boolean
   priority: number
+  nextEventOnly?: boolean
 }
 
 export interface ActionConfig {

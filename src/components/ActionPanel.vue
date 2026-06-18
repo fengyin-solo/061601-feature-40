@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useGameStore } from '../stores/gameStore'
 import gameConfig from '../config/gameConfig'
 
@@ -12,6 +12,18 @@ const gameStore = useGameStore()
 const canPerformAction = computed(() => gameStore.actionsRemaining > 0)
 
 const hasSelectedCharacter = computed(() => gameStore.selectedCharacterId !== null)
+
+const characterReady = ref(false)
+
+watch(() => gameStore.selectedCharacterId, (newId) => {
+  if (newId) {
+    characterReady.value = true
+    setTimeout(() => { characterReady.value = false }, 600)
+  }
+})
+
+const chatActive = computed(() => hasSelectedCharacter.value && canPerformAction.value)
+const giftActive = computed(() => hasSelectedCharacter.value && canPerformAction.value)
 
 function doChat() {
   if (!hasSelectedCharacter.value || !canPerformAction.value) return
@@ -34,6 +46,7 @@ function doWork() {
     <div class="action-grid">
       <button 
         class="action-btn chat"
+        :class="{ 'action-ready': characterReady && chatActive }"
         :disabled="!hasSelectedCharacter || !canPerformAction"
         @click="doChat"
       >
@@ -45,6 +58,7 @@ function doWork() {
 
       <button 
         class="action-btn gift"
+        :class="{ 'action-ready': characterReady && giftActive }"
         :disabled="!hasSelectedCharacter || !canPerformAction"
         @click="emit('open-gift')"
       >
@@ -66,7 +80,10 @@ function doWork() {
       </button>
     </div>
 
-    <div v-if="!hasSelectedCharacter" class="hint">
+    <div v-if="hasSelectedCharacter && canPerformAction" class="hint ready">
+      ✅ 已选中角色，可以聊天或送礼了
+    </div>
+    <div v-else-if="!hasSelectedCharacter" class="hint">
       💡 请先选择一个角色进行互动
     </div>
 
@@ -128,6 +145,17 @@ function doWork() {
   background: #dcfce7;
 }
 
+.action-btn.action-ready {
+  animation: ready-pulse 0.6s ease-out;
+  border: 2px solid var(--accent-primary);
+}
+
+@keyframes ready-pulse {
+  0% { transform: scale(1); box-shadow: none; }
+  50% { transform: scale(1.05); box-shadow: 0 0 16px var(--accent-primary); }
+  100% { transform: scale(1); box-shadow: none; }
+}
+
 .action-icon {
   font-size: 32px;
 }
@@ -158,6 +186,16 @@ function doWork() {
   color: #92400e;
   border-radius: var(--radius-sm);
   font-size: 13px;
+}
+
+.hint.ready {
+  background: #dcfce7;
+  color: #166534;
+}
+
+[data-theme='dark'] .hint.ready {
+  background: #14532d;
+  color: #86efac;
 }
 
 .hint.warning {

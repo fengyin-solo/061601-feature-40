@@ -215,14 +215,31 @@ export const useGameStore = defineStore('game', () => {
     }
 
     saveHistory()
-    actionsRemaining.value -= actionConfig.energyCost
 
     switch (actionType) {
-      case 'chat':
-        return performChat(targetId!)
-      case 'gift':
-        return performGift(targetId!, giftId!)
+      case 'chat': {
+        if (!targetId) return false
+        const charState = getCharacterState(targetId)
+        const charConfig = gameConfig.characters.find(c => c.id === targetId)
+        if (!charState || !charConfig || !charState.unlocked) return false
+        actionsRemaining.value -= actionConfig.energyCost
+        return performChat(targetId)
+      }
+      case 'gift': {
+        if (!targetId || !giftId) return false
+        const charState = getCharacterState(targetId)
+        const charConfig = gameConfig.characters.find(c => c.id === targetId)
+        const giftConfig = gameConfig.gifts.find(g => g.id === giftId)
+        if (!charState || !charConfig || !giftConfig || !charState.unlocked) return false
+        if (resources.value < giftConfig.price) {
+          addLog('system', '💰 代币不足！')
+          return false
+        }
+        actionsRemaining.value -= actionConfig.energyCost
+        return performGift(targetId, giftId)
+      }
       case 'work':
+        actionsRemaining.value -= actionConfig.energyCost
         return performWork()
       default:
         return false
@@ -325,6 +342,8 @@ export const useGameStore = defineStore('game', () => {
     if (currentEvent.value) return
 
     const availableEvents = gameConfig.events.filter(event => {
+      if (event.nextEventOnly) return false
+
       if (event.once && triggeredEvents.value.includes(event.id)) return false
 
       const cond = event.triggerCondition
@@ -357,10 +376,12 @@ export const useGameStore = defineStore('game', () => {
     }
   }
 
-  function triggerEvent(event: GameEventConfig) {
+  function triggerEvent(event: GameEventConfig, fromChain = false) {
     currentEvent.value = event
     showEventModal.value = true
-    triggeredEvents.value.push(event.id)
+    if (!fromChain && event.once) {
+      triggeredEvents.value.push(event.id)
+    }
     addLog('event', `📖 触发事件：${event.title}`, event.characterId)
   }
 
@@ -405,9 +426,12 @@ export const useGameStore = defineStore('game', () => {
     if (choice.nextEventId) {
       const nextEvent = gameConfig.events.find(e => e.id === choice.nextEventId)
       if (nextEvent) {
-        setTimeout(() => triggerEvent(nextEvent), 300)
+        setTimeout(() => triggerEvent(nextEvent, true), 300)
+        return
       }
     }
+
+    checkAndTriggerEvent()
   }
 
   function selectCharacter(id: string) {

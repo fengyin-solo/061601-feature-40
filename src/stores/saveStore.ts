@@ -145,7 +145,11 @@ export const useSaveStore = defineStore('save', () => {
       const data = localStorage.getItem(AUTOSAVE_KEY)
       if (!data) return false
       const save = JSON.parse(data)
-      return deserializeGameState(save.data)
+      const success = deserializeGameState(save.data)
+      if (success) {
+        gameStore.checkAndTriggerEvent()
+      }
+      return success
     } catch (e) {
       console.error('Failed to load autosave:', e)
       return false
