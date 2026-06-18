@@ -7,6 +7,10 @@ const gameStore = useGameStore()
 
 const event = computed(() => gameStore.currentEvent)
 
+const isRecoveryEvent = computed(() => {
+  return event.value?.triggerCondition?.isRecovery === true
+})
+
 const characterConfig = computed(() => {
   if (!event.value?.characterId) return null
   return gameConfig.characters.find(c => c.id === event.value!.characterId)
@@ -45,7 +49,9 @@ function formatEffect(effect: any): string {
             <span class="char-avatar">{{ characterConfig.avatar }}</span>
             <span class="char-name">{{ characterConfig.name }}</span>
           </div>
-          <span class="event-tag">剧情事件</span>
+          <span class="event-tag" :class="{ recovery: isRecoveryEvent }">
+            {{ isRecoveryEvent ? '🔄 挽回机会' : '剧情事件' }}
+          </span>
         </div>
 
         <h2 class="event-title">{{ event.title }}</h2>
@@ -120,6 +126,16 @@ function formatEffect(effect: any): string {
   background: var(--accent-primary);
   color: white;
   border-radius: 9999px;
+}
+
+.event-tag.recovery {
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  animation: pulse-recovery 2s ease-in-out infinite;
+}
+
+@keyframes pulse-recovery {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
 }
 
 .event-title {

@@ -67,6 +67,9 @@ export interface GameEventConfig {
     timeOfDay?: TimeOfDay
     requiredFlags?: string[]
     characterId?: string
+    minResources?: number
+    maxResources?: number
+    isRecovery?: boolean
   }
   choices: EventChoice[]
   once: boolean

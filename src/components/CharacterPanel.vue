@@ -18,6 +18,10 @@ const charactersWithConfig = computed(() => {
   }).filter(item => item.config)
 })
 
+function isLowAffinity(affinity: number): boolean {
+  return affinity <= 10
+}
+
 function selectCharacter(id: string) {
   gameStore.selectCharacter(id)
 }
@@ -43,7 +47,10 @@ function selectCharacter(id: string) {
         <div class="character-info">
           <div class="character-header">
             <span class="character-name">{{ item.config?.name }}</span>
-            <span class="affinity-stage">{{ getAffinityStage(item.state.affinity) }}</span>
+            <div class="header-badges">
+              <span v-if="isLowAffinity(item.state.affinity)" class="warning-badge">⚠️ 关系危机</span>
+              <span class="affinity-stage">{{ getAffinityStage(item.state.affinity) }}</span>
+            </div>
           </div>
           
           <div class="stat-row">
@@ -154,6 +161,31 @@ function selectCharacter(id: string) {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
+}
+
+.header-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.warning-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 9999px;
+  animation: pulse-warning 2s ease-in-out infinite;
+}
+
+[data-theme='dark'] .warning-badge {
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+
+@keyframes pulse-warning {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
 }
 
 .character-name {

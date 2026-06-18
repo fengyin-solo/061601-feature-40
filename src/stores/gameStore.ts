@@ -340,6 +340,9 @@ export const useGameStore = defineStore('game', () => {
         if (cond.maxAffinity !== undefined && charState.affinity > cond.maxAffinity) return false
       }
 
+      if (cond.minResources !== undefined && resources.value < cond.minResources) return false
+      if (cond.maxResources !== undefined && resources.value > cond.maxResources) return false
+
       if (cond.requiredFlags) {
         if (!cond.requiredFlags.every(f => flags.value.includes(f))) return false
       }

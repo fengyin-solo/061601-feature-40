@@ -33,9 +33,10 @@ const gameStore = useGameStore()
         <span class="status-icon">⚡</span>
         <span>行动力 {{ gameStore.actionsRemaining }}</span>
       </div>
-      <div class="status-item resources">
+      <div class="status-item resources" :class="{ 'low-resource': gameStore.resources <= 30 }">
         <span class="status-icon">💰</span>
         <span>{{ gameStore.resources }} 代币</span>
+        <span v-if="gameStore.resources <= 30" class="resource-warning">⚠️</span>
       </div>
     </div>
 
@@ -132,6 +133,32 @@ const gameStore = useGameStore()
 
 .toolbar-btn.reset:hover {
   background: #fee2e2;
+}
+
+.status-item.low-resource {
+  background: #fee2e2;
+  color: #991b1b;
+  animation: pulse-resource 2s ease-in-out infinite;
+}
+
+[data-theme='dark'] .status-item.low-resource {
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+
+@keyframes pulse-resource {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.resource-warning {
+  animation: shake 0.5s ease-in-out infinite;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
 }
 
 @media (max-width: 768px) {
